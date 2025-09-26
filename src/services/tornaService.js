@@ -6,11 +6,10 @@ const {
 } = require("../utils/transformer");
 
 // 从环境变量获取Torna配置
-const TORNA_API_URL = process.env.TORNA_API_URL || "https://torna.hewa.cn/api";
+const TORNA_API_URL = process.env.TORNA_API_URL ;
 const TORNA_API_TOKEN =
-  process.env.TORNA_API_TOKEN ||
-  "WL2ya2mA:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQyIiwiZXhwIjoxNzc0Njc2MTM1LCJpYXQiOjE3NDMxNDAxMzV9.W_vhV9a2zFXIbuMCMQ17xdhGN5rQvrlkv2eQAP65uF8";
-const DEFAULT_PROJECT_ID = process.env.TORNA_PROJECT_ID || "p58pNvz3";
+  process.env.TORNA_API_TOKEN ;
+const DEFAULT_PROJECT_ID = process.env.TORNA_PROJECT_ID ;
 
 /**
  * 创建Torna API客户端
