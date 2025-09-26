@@ -15,6 +15,24 @@ yarn-error.log*
 *.seed
 *.pid.lock
 
+# 开发和测试文件（不上传到git）
+dev/
+examples/
+deploy/
+
+# 空目录（清理后的残留）
+scripts/
+tests/
+
+# 构建和发布产物
+*.tgz
+dist/
+build/
+coverage/
+
+# npm包测试文件
+package-test/
+
 # 系统文件
 .DS_Store
 .DS_Store?
@@ -34,4 +52,12 @@ Thumbs.db
 # 临时文件
 *.tmp
 *.temp
+
+# 备份文件
+*.bak
+*.backup
+
+# 本地配置文件
+config.local.json
+mcp-config.json
 

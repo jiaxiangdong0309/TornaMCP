@@ -1,0 +1,137 @@
+#!/usr/bin/env node
+
+const { program } = require('commander');
+const path = require('path');
+const fs = require('fs');
+
+// 获取版本信息
+const packageJson = require(path.join(__dirname, '..', 'package.json'));
+
+program
+  .name('torna-mcp')
+  .description('Torna MCP Server - 通过MCP协议提供Torna API文档服务')
+  .version(packageJson.version);
+
+program
+  .command('start')
+  .description('启动Torna MCP服务器')
+  .option('-u, --url <url>', 'Torna API URL')
+  .option('-t, --token <token>', 'Torna API Token')
+  .option('-p, --project <projectId>', 'Torna Project ID (可选)')
+  .action((options) => {
+    // 设置环境变量
+    if (options.url) process.env.TORNA_API_URL = options.url;
+    if (options.token) process.env.TORNA_API_TOKEN = options.token;
+    if (options.project) process.env.TORNA_PROJECT_ID = options.project;
+
+    // 检查必需的环境变量
+    if (!process.env.TORNA_API_URL || !process.env.TORNA_API_TOKEN) {
+      console.error('❌ 错误: 必须提供TORNA_API_URL和TORNA_API_TOKEN');
+      console.error('');
+      console.error('使用方法:');
+      console.error('  torna-mcp start -u <API_URL> -t <API_TOKEN> [-p <PROJECT_ID>]');
+      console.error('');
+      console.error('或者设置环境变量:');
+      console.error('  export TORNA_API_URL="https://your-torna-instance.com"');
+      console.error('  export TORNA_API_TOKEN="your_token_here"');
+      console.error('  export TORNA_PROJECT_ID="your_project_id" # 可选');
+      console.error('  torna-mcp start');
+      process.exit(1);
+    }
+
+    console.error('🚀 启动Torna MCP服务器...');
+    console.error(`📡 API URL: ${process.env.TORNA_API_URL}`);
+    console.error(`🔑 Token: ${process.env.TORNA_API_TOKEN.substring(0, 8)}...`);
+    if (process.env.TORNA_PROJECT_ID) {
+      console.error(`📁 Project ID: ${process.env.TORNA_PROJECT_ID}`);
+    }
+    console.error('');
+
+    // 启动MCP服务器
+    require(path.join(__dirname, '..', 'mcp-server.js'));
+  });
+
+program
+  .command('config')
+  .description('生成MCP配置文件示例')
+  .option('-o, --output <file>', '输出文件路径', 'mcp-config.json')
+  .action((options) => {
+    const configTemplate = {
+      mcpServers: {
+        "torna-mcp": {
+          command: "npx",
+          args: ["torna-mcp", "start"],
+          env: {
+            TORNA_API_URL: "https://your-torna-instance.com",
+            TORNA_API_TOKEN: "your-api-token-here",
+            TORNA_PROJECT_ID: "your-project-id-here"
+          }
+        }
+      }
+    };
+
+    try {
+      fs.writeFileSync(options.output, JSON.stringify(configTemplate, null, 2));
+      console.log(`✅ MCP配置文件已生成: ${options.output}`);
+      console.log('');
+      console.log('请编辑配置文件，替换为你的实际Torna配置信息：');
+      console.log('- TORNA_API_URL: Torna实例的API地址');
+      console.log('- TORNA_API_TOKEN: Torna API访问令牌');
+      console.log('- TORNA_PROJECT_ID: Torna项目ID（可选）');
+    } catch (error) {
+      console.error('❌ 生成配置文件失败:', error.message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('test')
+  .description('测试Torna连接')
+  .option('-u, --url <url>', 'Torna API URL')
+  .option('-t, --token <token>', 'Torna API Token')
+  .option('-p, --project <projectId>', 'Torna Project ID (可选)')
+  .action(async (options) => {
+    // 设置环境变量
+    if (options.url) process.env.TORNA_API_URL = options.url;
+    if (options.token) process.env.TORNA_API_TOKEN = options.token;
+    if (options.project) process.env.TORNA_PROJECT_ID = options.project;
+
+    // 检查必需的环境变量
+    if (!process.env.TORNA_API_URL || !process.env.TORNA_API_TOKEN) {
+      console.error('❌ 错误: 必须提供TORNA_API_URL和TORNA_API_TOKEN');
+      process.exit(1);
+    }
+
+    console.log('🔍 测试Torna连接...');
+
+    try {
+      const { getAllApiDocs } = require(path.join(__dirname, '..', 'src', 'services', 'tornaService'));
+      const config = {
+        apiUrl: process.env.TORNA_API_URL,
+        apiToken: process.env.TORNA_API_TOKEN,
+        projectId: process.env.TORNA_PROJECT_ID,
+      };
+
+      const result = await getAllApiDocs(null, 5, config);
+      console.log('✅ 连接成功!');
+      console.log(`📊 找到 ${result.length} 个API接口`);
+
+      if (result.length > 0) {
+        console.log('');
+        console.log('前几个API接口:');
+        result.slice(0, 3).forEach((api, index) => {
+          console.log(`  ${index + 1}. ${api.name || api.title || 'Unnamed API'}`);
+        });
+      }
+    } catch (error) {
+      console.error('❌ 连接失败:', error.message);
+      process.exit(1);
+    }
+  });
+
+// 如果没有提供命令，显示帮助
+if (process.argv.length <= 2) {
+  program.help();
+}
+
+program.parse();

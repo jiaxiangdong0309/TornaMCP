@@ -1,21 +1,78 @@
 {
-  "name": "trona-mcp",
-  "version": "0.1.0",
-  "description": "MCP适配器，用于获取Torna接口文档",
+  "name": "torna-mcp",
+  "version": "1.0.0",
+  "description": "🚀 让AI助手读懂你的Torna API文档 | MCP服务器，支持Cursor、Claude等AI工具智能查询接口信息",
   "main": "mcp-server.js",
+  "bin": {
+    "torna-mcp": "./bin/torna-mcp"
+  },
   "scripts": {
     "start": "node mcp-server.js",
     "dev": "nodemon mcp-server.js",
-    "test": "jest"
+    "test": "jest",
+    "prepare-release": "node dev/scripts/prepare-release.js",
+    "prepublishOnly": "npm run prepare-release",
+    "postinstall": "echo '✅ Torna MCP installed successfully! Use: npx torna-mcp --help for usage.'",
+    "version": "git add -A",
+    "postversion": "git push && git push --tags"
   },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "torna",
+    "api-documentation",
+    "ai-tools",
+    "claude",
+    "cursor",
+    "copilot",
+    "llm",
+    "frontend",
+    "api",
+    "documentation",
+    "智能查询",
+    "接口文档",
+    "前端开发",
+    "ai-assistant",
+    "api-search",
+    "torna-api",
+    "mcp-server"
+  ],
+  "author": {
+    "name": "xiangdongjia",
+    "email": "jiaxiangdong0103@163.com",
+    "url": "https://github.com/jiaxiangdong0309"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/jiaxiangdong0309"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiaxiangdong0309/TronaMCP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jiaxiangdong0309/TronaMCP/issues"
+  },
+  "homepage": "https://github.com/jiaxiangdong0309/TronaMCP#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "mcp-server.js",
+    "src/",
+    "bin/",
+    "README.md",
+    "INSTALL.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.18.2",
-    "axios": "^1.8.4"
+    "axios": "^1.8.4",
+    "commander": "^9.5.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.0.2"
-  },
-  "author": "",
-  "license": "MIT"
+  }
 }

@@ -1,0 +1,28 @@
+# Git仓库结构说明
+
+本项目的git仓库只包含以下核心文件：
+
+## 📦 核心文件（会提交到git）
+- bin/                  # CLI工具
+- src/                  # 核心源代码
+- mcp-server.js        # 主服务器文件
+- package.json         # 包配置
+- package-lock.json    # 依赖锁定文件
+- README.md            # 主文档
+- INSTALL.md           # 快速安装指南
+- .gitignore           # git忽略规则
+- .npmignore           # npm忽略规则
+
+## 🚫 忽略的文件（不会提交到git）
+- dev/                 # 开发和测试文件
+- examples/            # 配置示例文件
+- deploy/              # 部署相关文件
+- node_modules/        # 依赖包
+- *.log                # 日志文件
+- .env*                # 环境变量文件
+
+这样设计的好处：
+1. 保持git仓库简洁
+2. 只包含必要的核心文件
+3. 开发文件本地管理，不影响其他开发者
+4. 减少仓库大小和克隆时间
