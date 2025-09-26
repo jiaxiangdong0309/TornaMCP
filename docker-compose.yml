@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  trona-mcp:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - TORNA_API_URL=${TORNA_API_URL}
+      - TORNA_API_TOKEN=${TORNA_API_TOKEN}
+      - TORNA_PROJECT_ID=${TORNA_PROJECT_ID}
+      - PORT=3000
+      - HOST=0.0.0.0
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
