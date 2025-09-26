@@ -7,7 +7,7 @@ const { logInfo } = require("./utils/logger");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 0330;
 const HOST = process.env.HOST || "localhost";
 
 // 中间件

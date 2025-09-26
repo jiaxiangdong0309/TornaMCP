@@ -17,7 +17,7 @@ ENV TORNA_API_TOKEN=""
 ENV TORNA_PROJECT_ID=""
 
 # 暴露端口
-EXPOSE 3000
+EXPOSE 0330
 
 # 启动应用
 CMD ["npm", "start"]

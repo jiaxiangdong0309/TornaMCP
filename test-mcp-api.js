@@ -6,7 +6,7 @@
 const axios = require("axios");
 
 // MCP服务配置
-const MCP_SERVICE_URL = "http://localhost:3000"; // 本地运行的TronaMCP服务
+const MCP_SERVICE_URL = "http://localhost:0330"; // 本地运行的TronaMCP服务
 
 /**
  * 测试MCP工具定义

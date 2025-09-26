@@ -3,7 +3,7 @@
     {
       "name": "torna",
       "description": "通过MCP获取Torna接口文档的适配器",
-      "baseURL": "http://localhost:3000",
+      "baseURL": "http://localhost:0330",
       "endpoints": {
         "get_tools": "/mcp/tools",
         "invoke": "/mcp/invoke/{tool_name}"

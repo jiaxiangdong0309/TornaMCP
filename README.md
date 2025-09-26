@@ -34,7 +34,7 @@ TORNA_API_TOKEN=your_token_here
 TORNA_PROJECT_ID=your_project_id
 
 # 服务器配置
-PORT=3000
+PORT=0330
 HOST=localhost
 LOG_LEVEL=INFO
 ```
@@ -123,7 +123,7 @@ start.bat
 ### MCP 工具定义
 
 ```
-GET http://localhost:3000/mcp/tools
+GET http://localhost:0330/mcp/tools
 ```
 
 返回可用的 MCP 工具定义。
@@ -131,7 +131,7 @@ GET http://localhost:3000/mcp/tools
 ### 查询 API 文档
 
 ```
-POST http://localhost:3000/mcp/invoke/get_torna_api_docs
+POST http://localhost:0330/mcp/invoke/get_torna_api_docs
 Content-Type: application/json
 
 {
@@ -144,7 +144,7 @@ Content-Type: application/json
 ### 获取所有 API 列表
 
 ```
-POST http://localhost:3000/mcp/invoke/list_all_torna_apis
+POST http://localhost:0330/mcp/invoke/list_all_torna_apis
 Content-Type: application/json
 
 {
@@ -163,7 +163,7 @@ const axios = require("axios");
 // 查询API文档
 async function getApiDoc(apiName) {
   const response = await axios.post(
-    "http://localhost:3000/mcp/invoke/get_torna_api_docs",
+    "http://localhost:0330/mcp/invoke/get_torna_api_docs",
     {
       apiName: apiName,
     }
