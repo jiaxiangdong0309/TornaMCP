@@ -30,7 +30,6 @@ cp .env.example .env
 TORNA_API_URL=https://your-torna-instance.com/api
 TORNA_API_TOKEN=your_token_here
 TORNA_PROJECT_ID=your_project_id
-TORNA_SPACE_ID=your_space_id
 
 # 服务器配置
 PORT=3000
