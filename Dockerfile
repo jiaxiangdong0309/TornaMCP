@@ -11,13 +11,10 @@ RUN npm install --production
 # 复制源代码
 COPY . .
 
-# 设置环境变量（可选，用户可以通过docker run -e覆盖）
+# 设置环境变量（用户可以通过docker run -e覆盖）
 ENV TORNA_API_URL=""
 ENV TORNA_API_TOKEN=""
 ENV TORNA_PROJECT_ID=""
 
-# 暴露端口
-EXPOSE 0330
-
-# 启动应用
+# 启动MCP服务
 CMD ["npm", "start"]
