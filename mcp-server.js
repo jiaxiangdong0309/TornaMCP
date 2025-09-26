@@ -14,6 +14,13 @@ const {
   getApiDocDetail,
 } = require('./src/services/tornaService');
 
+// 从环境变量获取Torna配置
+const TORNA_CONFIG = {
+  apiUrl: process.env.TORNA_API_URL,
+  apiToken: process.env.TORNA_API_TOKEN,
+  projectId: process.env.TORNA_PROJECT_ID,
+};
+
 class TornaMCPServer {
   constructor() {
     this.server = new Server(
@@ -101,7 +108,7 @@ class TornaMCPServer {
       try {
         switch (name) {
           case 'get_torna_api_docs':
-            const apiDocs = await getApiDocsByName(args.apiName, args.projectId);
+            const apiDocs = await getApiDocsByName(args.apiName, args.projectId, TORNA_CONFIG);
             return {
               content: [
                 {
@@ -112,7 +119,7 @@ class TornaMCPServer {
             };
 
           case 'list_all_torna_apis':
-            const allApis = await getAllApiDocs(args.projectId, args.limit);
+            const allApis = await getAllApiDocs(args.projectId, args.limit, TORNA_CONFIG);
             return {
               content: [
                 {
@@ -123,7 +130,7 @@ class TornaMCPServer {
             };
 
           case 'get_torna_api_detail':
-            const apiDetail = await getApiDocDetail(args.apiId, args.projectId);
+            const apiDetail = await getApiDocDetail(args.apiId, TORNA_CONFIG);
             return {
               content: [
                 {

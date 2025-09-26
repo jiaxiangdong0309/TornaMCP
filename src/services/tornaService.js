@@ -5,28 +5,32 @@ const {
   transformSingleApiToMCP,
 } = require("../utils/transformer");
 
-// 从环境变量获取Torna配置
-const TORNA_API_URL = process.env.TORNA_API_URL ;
-const TORNA_API_TOKEN =
-  process.env.TORNA_API_TOKEN ;
-const DEFAULT_PROJECT_ID = process.env.TORNA_PROJECT_ID ;
+// 从环境变量获取Torna配置，支持MCP配置传入
+const TORNA_API_URL = process.env.TORNA_API_URL;
+const TORNA_API_TOKEN = process.env.TORNA_API_TOKEN;
+const DEFAULT_PROJECT_ID = process.env.TORNA_PROJECT_ID;
 
 /**
  * 创建Torna API客户端
+ * @param {Object} config - 可选的配置对象，包含apiUrl, apiToken
  * @returns {Object} Axios实例
  */
-function createTornaClient() {
+function createTornaClient(config = {}) {
+  // 优先使用传入的配置，否则使用环境变量
+  const apiUrl = config.apiUrl || TORNA_API_URL;
+  const apiToken = config.apiToken || TORNA_API_TOKEN;
+
   // 检查配置
-  if (!TORNA_API_URL) {
-    throw new Error("未配置Torna API URL");
+  if (!apiUrl) {
+    throw new Error("未配置Torna API URL，请通过环境变量TORNA_API_URL或配置参数apiUrl设置");
   }
 
-  if (!TORNA_API_TOKEN) {
-    throw new Error("未配置Torna API Token");
+  if (!apiToken) {
+    throw new Error("未配置Torna API Token，请通过环境变量TORNA_API_TOKEN或配置参数apiToken设置");
   }
 
   // 确保API URL是有效的URL格式
-  let baseURL = TORNA_API_URL;
+  let baseURL = apiUrl;
 
   // 如果URL不是以http或https开头，则添加https://
   if (!/^https?:\/\//i.test(baseURL)) {
@@ -53,7 +57,7 @@ function createTornaClient() {
     baseURL: baseURL,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${TORNA_API_TOKEN}`,
+      Authorization: `Bearer ${apiToken}`,
       "User-Agent":
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
       Accept: "application/json, text/plain, */*",
@@ -99,16 +103,17 @@ function createTornaClient() {
 
 /**
  * 获取项目信息
- * @param {string} projectId - 项目ID
+ * @param {string} [projectId] - 项目ID
+ * @param {Object} [config] - 可选的配置对象
  * @returns {Promise<Object>} 项目信息
  */
-async function getProjectInfo(projectId = DEFAULT_PROJECT_ID) {
+async function getProjectInfo(projectId = DEFAULT_PROJECT_ID, config = {}) {
   try {
     if (!projectId) {
-      projectId = DEFAULT_PROJECT_ID;
+      projectId = config.projectId || DEFAULT_PROJECT_ID || "";
     }
 
-    const client = createTornaClient();
+    const client = createTornaClient(config);
 
     // 调用Torna获取项目信息 - 由于/project/info不可用，尝试使用/doc/view
     const response = await client.get("doc/view", {
@@ -136,10 +141,11 @@ async function getProjectInfo(projectId = DEFAULT_PROJECT_ID) {
 /**
  * 通过名称获取API文档
  * @param {string} apiName - API名称或关键词
- * @param {string} projectId - 可选，项目ID
+ * @param {string} [projectId] - 可选，项目ID
+ * @param {Object} [config] - 可选的配置对象
  * @returns {Promise<Object>} 处理后的API文档
  */
-async function getApiDocsByName(apiName, projectId = DEFAULT_PROJECT_ID) {
+async function getApiDocsByName(apiName, projectId = DEFAULT_PROJECT_ID, config = {}) {
   try {
     // 确保有有效参数
     if (!apiName || apiName.trim() === "") {
@@ -147,14 +153,14 @@ async function getApiDocsByName(apiName, projectId = DEFAULT_PROJECT_ID) {
     }
 
     if (!projectId) {
-      projectId = DEFAULT_PROJECT_ID;
+      projectId = config.projectId || DEFAULT_PROJECT_ID || "";
     }
 
-    const client = createTornaClient();
+    const client = createTornaClient(config);
 
     try {
       // 获取项目的模块列表
-      const modules = await getProjectModules(projectId);
+      const modules = await getProjectModules(projectId, config);
 
       if (!modules || modules.length === 0) {
         logInfo(`未找到模块，项目ID: ${projectId}`);
@@ -265,15 +271,16 @@ function extractApisFromTree(apiTree) {
 /**
  * 获取API文档详情
  * @param {string} apiId - API的ID
+ * @param {Object} config - 可选的配置对象
  * @returns {Promise<Object>} API详情
  */
-async function getApiDocDetail(apiId) {
+async function getApiDocDetail(apiId, config = {}) {
   try {
     if (!apiId) {
       throw new Error("API ID是必须的");
     }
 
-    const client = createTornaClient();
+    const client = createTornaClient(config);
 
     logInfo(`获取API详情，ID: ${apiId}`);
 
@@ -304,16 +311,17 @@ async function getApiDocDetail(apiId) {
 
 /**
  * 获取项目的模块列表
- * @param {string} projectId - 项目ID
+ * @param {string} [projectId] - 项目ID
+ * @param {Object} [config] - 可选的配置对象
  * @returns {Promise<Array>} 模块列表
  */
-async function getProjectModules(projectId = DEFAULT_PROJECT_ID) {
+async function getProjectModules(projectId = DEFAULT_PROJECT_ID, config = {}) {
   try {
     if (!projectId) {
-      projectId = DEFAULT_PROJECT_ID;
+      projectId = config.projectId || DEFAULT_PROJECT_ID || "";
     }
 
-    const client = createTornaClient();
+    const client = createTornaClient(config);
 
     // 调用Torna获取模块列表，确保路径格式正确
     const response = await client.get("module/list", {
@@ -340,29 +348,30 @@ async function getProjectModules(projectId = DEFAULT_PROJECT_ID) {
 
 /**
  * 获取所有API文档列表
- * @param {string} projectId - 可选，项目ID
- * @param {number} limit - 可选，限制返回的API数量
+ * @param {string} [projectId] - 可选，项目ID
+ * @param {number} [limit] - 可选，限制返回的API数量
+ * @param {Object} [config] - 可选的配置对象
  * @returns {Promise<Array>} API列表
  */
-async function getAllApiDocs(projectId = DEFAULT_PROJECT_ID, limit = 100) {
+async function getAllApiDocs(projectId = DEFAULT_PROJECT_ID, limit = 100, config = {}) {
   try {
     if (!projectId) {
-      projectId = DEFAULT_PROJECT_ID;
+      projectId = config.projectId || DEFAULT_PROJECT_ID || "";
     }
 
-    if (!limit || isNaN(parseInt(limit))) {
+    if (!limit || isNaN(parseInt(String(limit)))) {
       limit = 100;
     } else {
-      limit = parseInt(limit);
+      limit = parseInt(String(limit));
     }
 
     logInfo(`获取所有API，项目ID: ${projectId}, 限制: ${limit}`);
 
-    const client = createTornaClient();
+    const client = createTornaClient(config);
 
     try {
       // 获取项目的模块列表
-      const modules = await getProjectModules(projectId);
+      const modules = await getProjectModules(projectId, config);
 
       if (!modules || modules.length === 0) {
         logInfo(`未找到模块，项目ID: ${projectId}`);

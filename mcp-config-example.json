@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "TornaMCP": {
+      "command": "docker run -i --rm -e TORNA_API_URL -e TORNA_API_TOKEN -e TORNA_PROJECT_ID jiaxiangdong0309/tornamcp:latest",
+      "env": {
+        "TORNA_API_URL": "https://your-torna-instance.com",
+        "TORNA_API_TOKEN": "your-api-token-here",
+        "TORNA_PROJECT_ID": "your-project-id-here"
+      },
+      "args": []
+    }
+  }
+}

@@ -17,7 +17,9 @@ npm install
 
 ## 配置
 
-### 环境变量配置
+TornaMCP 支持两种配置方式：环境变量配置和 MCP 配置文件配置。
+
+### 方式一：环境变量配置（本地开发）
 
 1. 复制环境变量模板文件：
 ```bash
@@ -37,7 +39,55 @@ HOST=localhost
 LOG_LEVEL=INFO
 ```
 
-**注意**：请将 `your_token_here`、`your_project_id` 等替换为你的实际配置值。
+### 方式二：MCP 配置文件配置（推荐）
+
+这是推荐的方式，类似于 GitHub MCP 的配置方法，用户可以在 MCP 配置文件中直接设置参数。
+
+#### Docker 方式
+
+在你的 MCP 配置文件中添加：
+
+```json
+{
+  "mcpServers": {
+    "TornaMCP": {
+      "command": "docker run -i --rm -e TORNA_API_URL -e TORNA_API_TOKEN -e TORNA_PROJECT_ID jiaxiangdong0309/tornamcp:latest",
+      "env": {
+        "TORNA_API_URL": "https://your-torna-instance.com",
+        "TORNA_API_TOKEN": "your-api-token-here",
+        "TORNA_PROJECT_ID": "your-project-id-here"
+      },
+      "args": []
+    }
+  }
+}
+```
+
+#### 本地运行方式
+
+```json
+{
+  "mcpServers": {
+    "TornaMCP": {
+      "command": "node",
+      "args": ["mcp-server.js"],
+      "env": {
+        "TORNA_API_URL": "https://your-torna-instance.com",
+        "TORNA_API_TOKEN": "your-api-token-here",
+        "TORNA_PROJECT_ID": "your-project-id-here"
+      }
+    }
+  }
+}
+```
+
+**注意**：请将配置中的 `your-torna-instance.com`、`your-api-token-here`、`your-project-id-here` 等替换为你的实际配置值。
+
+### 配置参数说明
+
+- `TORNA_API_URL`: Torna 实例的 API 地址（必需）
+- `TORNA_API_TOKEN`: Torna API 访问令牌（必需）
+- `TORNA_PROJECT_ID`: Torna 项目 ID（可选，如果不提供，需要在调用时指定）
 
 ## 测试连接
 
